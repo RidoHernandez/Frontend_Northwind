@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Northwind - Catálogo de Productos</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand fw-bold" href="./productos.html">Northwind API</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="./productos.html">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active fw-bold" href="./categorias.html">Categorías</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./proveedores.html">Proveedores</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-light small">
+                    Usuario: <strong id="lblUsuario" class="text-info">Cargando...</strong>
+                </span>
+                <button id="btnLogout" class="btn btn-outline-danger btn-sm">Cerrar Sesión</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="container-fluid px-4 py-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h2 class="fw-bold mb-0">Gestión de Productos</h2>
+                <small class="text-muted">Inventario general Northwind</small>
+            </div>
+            <button id="btnNuevoProducto" class="btn btn-primary shadow-sm">+ Nuevo Producto</button>
+        </div>
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Producto</th>
+                                <th>Precio Unitario</th>
+                                <th>Stock</th>
+                                <th>Por Llegar</th>
+                                <th>Presentación</th>
+                                <th>Categoría</th>
+                                <th>Proveedor</th>
+                                <th>Estado</th>
+                                <th class="text-center" style="width: 160px;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyProductos">
+                            <tr>
+                                <td colspan="10" class="text-center py-4 text-muted">Cargando productos...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- COMENTARIO PARA EL BECARIO DE IALAN  -->
+    <!-- IMPLEMENTAR PARA CREAR Y EDITAR PRODUCTOS -->
+    <!-- Basate en lo que ya esta en los controllers, si quieres cambiar las clases dale, pero alli ya bienen los IDS y clases -->
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Controlador exclusivo de Productos -->
+    <script type="module" src="./src/controllers/productsController.js"></script>
+</body>
+</html>
