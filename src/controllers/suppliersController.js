@@ -1,5 +1,8 @@
 import { authService } from "../services/authService.js";
 import { supplierService } from "../services/supplierService.js";
+import { baseTableOptions, escapeHtml, initNavbar } from "../utils/tableHelpers.js";
+
+let tabla = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     const usuario = await authService.checkSession();
@@ -7,33 +10,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = './login.html';
         return;
     }
+    initNavbar(usuario, authService);
 
-    document.getElementById('lblUsuario').textContent = usuario.nombre || usuario.email;
+    tabla = new DataTable('#tablaProveedores', baseTableOptions({
+        order: [[0, 'asc']],
+        columns: [
+            { data: 'supplierId', render: (d) => `<strong>${escapeHtml(d)}</strong>` },
+            { data: 'companyName', render: (d) => escapeHtml(d) }
+        ]
+    }));
 
-    document.getElementById('btnLogout').addEventListener('click', () => {
-        authService.logout();
-    });
-    
     await listarProveedores();
 });
 
 async function listarProveedores() {
-    const tbody = document.getElementById('tbodyProveedores');
     try {
         const proveedores = await supplierService.getSuppliers();
-
-        if (!Array.isArray(proveedores) || proveedores.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="2" class="text-center py-4 text-muted">No hay proveedores registrados.</td></tr>`;
-            return;
-        }
-
-        tbody.innerHTML = proveedores.map(p => `
-            <tr>
-                <td><strong>${p.supplierId}</strong></td>
-                <td>${p.companyName}</td>
-            </tr>
-        `).join('');
+        tabla.clear().rows.add(Array.isArray(proveedores) ? proveedores : []).draw();
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="2" class="text-center py-4 text-danger">${err.message}</td></tr>`;
+        tabla.clear().draw();
+        alert(err.message);
     }
 }

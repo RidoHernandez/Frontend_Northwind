@@ -4,29 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Northwind - Catálogo de Productos</title>
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <!-- DataTables + Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.min.css">
 </head>
-<body>
+<body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div class="container-fluid px-4">
             <a class="navbar-brand fw-bold" href="./productos.html">Northwind API</a>
-            <div class="collapse navbar-collapse">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navPrincipal"
+                    aria-controls="navPrincipal" aria-expanded="false" aria-label="Mostrar navegación">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navPrincipal">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="./productos.html">Productos</a>
+                        <a class="nav-link active fw-bold" aria-current="page" href="./productos.html">Productos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active fw-bold" href="./categorias.html">Categorías</a>
+                        <a class="nav-link" href="./categorias.html">Categorías</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="./proveedores.html">Proveedores</a>
                     </li>
                 </ul>
-            </div>
-            <div class="d-flex align-items-center gap-3">
-                <span class="text-light small">
-                    Usuario: <strong id="lblUsuario" class="text-info">Cargando...</strong>
-                </span>
-                <button id="btnLogout" class="btn btn-outline-danger btn-sm">Cerrar Sesión</button>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="text-light small">
+                        Usuario: <strong id="lblUsuario" class="text-info">Cargando...</strong>
+                    </span>
+                    <button id="btnLogout" class="btn btn-outline-danger btn-sm">Cerrar Sesión</button>
+                </div>
             </div>
         </div>
     </nav>
@@ -41,39 +50,111 @@
             <button id="btnNuevoProducto" class="btn btn-primary shadow-sm">+ Nuevo Producto</button>
         </div>
         <div class="card shadow-sm border-0">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle mb-0">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Producto</th>
-                                <th>Precio Unitario</th>
-                                <th>Stock</th>
-                                <th>Por Llegar</th>
-                                <th>Presentación</th>
-                                <th>Categoría</th>
-                                <th>Proveedor</th>
-                                <th>Estado</th>
-                                <th class="text-center" style="width: 160px;">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbodyProductos">
-                            <tr>
-                                <td colspan="10" class="text-center py-4 text-muted">Cargando productos...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="card-body">
+                <table id="tablaProductos" class="table table-striped table-hover align-middle w-100">
+                    <caption class="visually-hidden">Listado de productos de Northwind</caption>
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Producto</th>
+                            <th>Precio Unitario</th>
+                            <th>Stock</th>
+                            <th>Por Llegar</th>
+                            <th>Presentación</th>
+                            <th>Categoría</th>
+                            <th>Proveedor</th>
+                            <th>Estado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyProductos"></tbody>
+                </table>
             </div>
         </div>
     </main>
 
-    <!-- COMENTARIO PARA EL BECARIO DE IALAN  -->
-    <!-- IMPLEMENTAR PARA CREAR Y EDITAR PRODUCTOS -->
-    <!-- Basate en lo que ya esta en los controllers, si quieres cambiar las clases dale, pero alli ya bienen los IDS y clases -->
+    <!-- Modal Crear / Editar Producto -->
+    <div class="modal fade" id="modalProducto" tabindex="-1" aria-labelledby="modalTitulo" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <form id="formProducto" novalidate>
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" id="modalTitulo">Nuevo Producto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="prodId">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="prodName" class="form-label">Nombre del producto <span class="text-danger">*</span></label>
+                                <input type="text" id="prodName" class="form-control" maxlength="40" required>
+                                <div class="invalid-feedback">El nombre es obligatorio (máx. 40 caracteres).</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="prodCategory" class="form-label">Categoría</label>
+                                <select id="prodCategory" class="form-select">
+                                    <option value="">-- Sin categoría --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="prodSupplier" class="form-label">Proveedor</label>
+                                <select id="prodSupplier" class="form-select">
+                                    <option value="">-- Sin proveedor --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="prodQuantity" class="form-label">Presentación (cantidad por unidad)</label>
+                                <input type="text" id="prodQuantity" class="form-control" maxlength="20" placeholder="Ej. 10 cajas x 20 bolsas">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="prodPrice" class="form-label">Precio unitario</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" id="prodPrice" class="form-control" min="0" step="0.01" inputmode="decimal">
+                                    <div class="invalid-feedback">El precio no puede ser negativo.</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="prodStock" class="form-label">Unidades en stock</label>
+                                <input type="number" id="prodStock" class="form-control" min="0" max="32767" step="1" inputmode="numeric">
+                                <div class="invalid-feedback">Valor entero entre 0 y 32767.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="prodOrder" class="form-label">Unidades por llegar</label>
+                                <input type="number" id="prodOrder" class="form-control" min="0" max="32767" step="1" inputmode="numeric">
+                                <div class="invalid-feedback">Valor entero entre 0 y 32767.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="prodReorder" class="form-label">Nivel de reorden</label>
+                                <input type="number" id="prodReorder" class="form-control" min="0" max="32767" step="1" inputmode="numeric">
+                                <div class="invalid-feedback">Valor entero entre 0 y 32767.</div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="prodDiscontinued">
+                                    <label class="form-check-label" for="prodDiscontinued">Producto descontinuado</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" id="btnGuardar" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery (requerido por DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables + Bootstrap 5 JS -->
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.3/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.3/js/responsive.bootstrap5.min.js"></script>
     <!-- Controlador exclusivo de Productos -->
     <script type="module" src="./src/controllers/productsController.js"></script>
 </body>
