@@ -4,6 +4,28 @@ import { categoryService } from "../services/categoryService.js";
 import { supplierService } from "../services/supplierService.js";
 import { ProductModel } from "../models/productModel.js";
 
+(async () => {
+    const usuario = await authService.checkSession();
+    if (!usuario) {
+        window.location.replace('./login.html');
+        return;
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('lblUsuario').textContent = usuario.nombre || usuario.email;
+        document.getElementById('btnLogout').addEventListener('click', () => {
+            authService.logout();
+        });
+        const modalEl = document.getElementById('modalProducto');
+        if (modalEl && window.bootstrap) {
+            modalInstancia = new bootstrap.Modal(modalEl);
+        }
+        configurarEventos();
+        cargarSelects();
+        listarProductos();
+    });
+})();
+
+
 let productosCache = [];
 let modalInstancia = null;
 

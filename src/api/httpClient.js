@@ -18,12 +18,19 @@ export const httpClient = async (endpoint, options = {}) => {
             ...(options.headers || {})
         }
     };
-
-    const response = await fetch(url, finalOptions);
-
-    if(response.status === 401){
-        console.warn("No autenticado o sesión expirada. Debes iniciar sesión.");
+    
+    try {
+        const response = await fetch(url, finalOptions);
+        if(response.status === 401){
+            console.warn("401 Unauthorized: Sesión no válida o expirada.");
+        } else if(response.status === 404){
+            console.warn(`404 Not Found: El recurso en ${endpoint} no existe en la API.`);
+        } else if(response.status === 500){
+            console.error("500 Server Error: Fallo interno del servidor API.");
+        }
+        return response;
+    } catch (error){
+        console.error("Error de conexión con el servidor:", error);
+        throw error;
     }
-
-    return response;
 };

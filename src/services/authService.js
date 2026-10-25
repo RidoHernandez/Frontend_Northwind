@@ -13,7 +13,7 @@ export const authService = {
         }
     },
     login: () => {
-        const returnUrl = encodeURIComponent(`${window.location.origin}/index.html`);
+        const returnUrl = encodeURIComponent(`${window.location.origin}/productos.html`);
         window.location.href = `${BASE_URL}/auth/GoogleOAuth/google?returnUrl=${returnUrl}`;
     },
     logout: () => {
